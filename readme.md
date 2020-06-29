@@ -1,5 +1,7 @@
 # Shell Scripts
 
+[![Build Status](https://travis-ci.org/gigante/sh.svg?branch=master)](https://travis-ci.org/gigante/sh)
+
 Scripts that make my day easier
 
 ## Script list
