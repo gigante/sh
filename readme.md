@@ -15,7 +15,7 @@ See each example in related script page
 ## How to install
 
 ```
-$ bash
+$ curl -sL https://git.io/JJvpl | bash -
 ```
 
 ## License
