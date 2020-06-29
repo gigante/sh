@@ -1,0 +1,128 @@
+#!/bin/bash
+
+function help() {
+    echo -e " ______  __
+|  _ \ \/ /
+| |_) \  /
+|  __//  \\
+|_|  /_/\_\\
+
+${GREEN}PX - aliases for distro package managers${NC}
+
+${YELLOW}Usage:${NC}
+  px <command> [<args>]
+
+${YELLOW}Some useful dk commands are:${NC}
+  ${GREEN}add${NC}    install package
+  ${GREEN}rm${NC}     remove package
+  ${GREEN}up${NC}     update packages
+  ${GREEN}sync${NC}   sync repo list
+  ${GREEN}clean${NC}  cleanup cache
+  ${GREEN}<pkg>${NC}  search for <pkg> package
+  ${GREEN}sup${NC}    list supported package managers"
+    exit 1
+}
+
+function sup() {
+    echo -e "
+${YELLOW}Supported package managers${NC}:
+  ${GREEN}dnf${NC}     Fedora, RHEL
+  ${GREEN}yay${NC}     Archlinux, Manjaro
+  ${GREEN}pacman${NC}  Archlinux, Manjaro
+  ${GREEN}apt${NC}     Debian, ubuntu, Linux Mint
+  ${GREEN}apk${NC}     Alpine
+  ${GREEN}zypper${NC}  OpenSuse"
+    exit 1
+}
+
+function run_yay() {
+    ! [ -x "$(command -v yay)" ] && run_pacman "$command" "$pkg"
+
+    case "$command" in
+    add) yay -S "$pkg" ;;
+    rm) yay -R "$pkg" ;;
+    up) yay -Syyu ;;
+    sync) yay -Sy ;;
+    clean) yay -Sc ;;
+    *) yay "$command" ;;
+    esac
+}
+
+function run_pacman() {
+    case "$command" in
+    add) sudo pacman -S "$pkg" --noconfirm ;;
+    rm) sudo pacman -R "$pkg" ;;
+    up) sudo pacman -Syu ;;
+    sync) sudo pacman -Sy ;;
+    clean) sudo pacman -Scc ;;
+    *) pacman -Ss "$command" ;;
+    esac
+}
+
+function run_dnf() {
+    case "$command" in
+    add) sudo dnf install -y "$pkg" ;;
+    rm) sudo dnf remove "$pkg" ;;
+    up | sync) sudo dnf upgrade ;;
+    clean) sudo dnf autoremove -y && sudo dnf clean all ;;
+    *) sudo dnf search "$command" ;;
+    esac
+}
+
+function run_apt() {
+    case "$command" in
+    add) sudo apt install -y "$pkg" ;;
+    rm) sudo apt remove -y "$pkg" ;;
+    up) sudo apt upgrade ;;
+    sync) sudo apt update ;;
+    clean) sudo apt autoremove && sudo apt clean ;;
+    *) sudo apt search "$command" ;;
+    esac
+}
+
+function run_zypper() {
+    case "$command" in
+    add) zypper install "$pkg" ;;
+    rm) zypper remove "$pkg" ;;
+    up) zypper update ;;
+    sync) zypper refresh ;;
+    clean) zypper clean ;;
+    *) zypper search "$command" ;;
+    esac
+}
+
+function run_apk() {
+    case "$command" in
+    add) apk add "$pkg" ;;
+    rm) apk del "$pkg" ;;
+    up) apk upgrade ;;
+    sync) apk update ;;
+    clean) apk cache clean ;;
+    *) apk search "$command" ;;
+    esac
+}
+
+function main() {
+    [[ -z "$command" ]] && help
+    if [ "$1" == 'sup' ]; then sup; fi
+
+    case "$distro" in
+    arch | manjaro) run_yay "$command" "$pkg" ;;
+    fedora | \"rhel\") run_dnf "$command" "$pkg" ;;
+    debian | ubuntu | linuxmint) run_apt "$command" "$pkg" ;;
+    \"opensuse-tumbleweed\" | \"opensuse-leap\") run_zypper "$command" "$pkg" ;;
+    alpine) run_apk "$command" "$pkg" ;;
+    *) echo -e "${RED}px doesnt support your distro. See 'sup' command${NC}" ;;
+    esac
+}
+
+NC='\033[0m'
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+
+distro=$(sed -n 's/^ID=//p' /etc/os-release)
+command=$1
+pkg=$2
+
+main "$@"

@@ -1,0 +1,108 @@
+#!/bin/bash
+
+function help() {
+    echo -e "    _ _
+ __| | |__
+/ _\` | / /
+\__,_|_\_\\
+
+${GREEN}Docker aliases${NC}
+
+${YELLOW}Usage:${NC}
+  dk <command> [<args>]
+
+${YELLOW}Some useful dk commands are:${NC}
+  ${GREEN}ls${NC}     list images
+  ${GREEN}ps${NC}     list active containers
+  ${GREEN}sh${NC}     shell into <img>
+  ${GREEN}bind${NC}   create volume with current dir and sh <img>
+  ${GREEN}gz${NC}     export <image> to *.tar.gz
+  ${GREEN}add${NC}    import <image.tar.gz>
+  ${GREEN}mon${NC}    monitoring containers with ctop
+  ${GREEN}clean${NC}  cleanup unused resources"
+    exit 1
+}
+
+function err() {
+    echo -e "${RED}$* ${NC}"
+}
+
+function yes() {
+    echo -e "${GREEN}$* ${NC}"
+}
+
+function sh() {
+    if [[ -z "$3" ]]; then
+        docker run -it --rm "$2" '/bin/sh'
+    else
+        docker run -it --rm "$2" "${@:3}"
+    fi
+}
+
+function bind() {
+    dir=$(basename "$PWD")
+    docker run -it --rm -v "$(pwd):/mnt/$dir" -w "/mnt/$dir" "$2" /bin/sh
+}
+
+function gz() {
+    filename=$(echo "$1" | sed 's/:/_/' | sed 's/\//_/')
+    yes "=> Exporting '$1' to $filename.tar.gz"
+    docker save "$1" | gzip > "$filename.tar.gz"
+    yes "=> Finish"
+}
+
+function clean() {
+    yes '=> removing <none> images'
+    noneimgs=$(docker images | grep "^<none>" | awk '{ print $3 }')
+    [[ -n "$noneimgs" ]] && docker rmi "$noneimgs"
+
+    yes '-> removing dangling images'
+    dangling=$(docker images -f "dangling=true" -q)
+    [[ -n "$dangling" ]] && docker rmi "$dangling"
+
+    yes '-> removing stopped containers'
+    stopped=$(docker ps -a -q)
+    [[ -n "$stopped" ]] && docker rm "$stopped"
+
+    yes '-> removing unused networks'
+    docker network prune -f
+
+    yes '-> removing unused local volumes'
+    docker volume prune -f
+}
+
+function mon() {
+    if ! [ -x "$(command -v ctop)" ]; then
+        yes '=> Downloading ctop'
+        curl -sL 'https://github.com/bcicen/ctop/releases/download/v0.7.3/ctop-0.7.3-linux-amd64' -o "$HOME/bin/ctop"
+        chmod +x "$HOME/bin/ctop"
+    fi
+    ctop
+}
+
+function main() {
+    ! [ -x "$(command -v docker)" ] && err 'docker not installed' && exit 1
+    [[ -z "$1" ]] && help
+
+    case "$1" in
+    ls) docker images --format "$lsfmt" "${@:2}" | tail -n +2 | sort -d ;;
+    ps) docker ps --format "$psfmt" "${@:2}" | tail -n +2 | sort -d ;;
+    sh) sh "$@" ;;
+    bind) bind "$@" ;;
+    clean) clean ;;
+    gz) gz "$2" ;;
+    add) docker load < "$2" ;;
+    mon) mon ;;
+    *) docker "$@" ;;
+    esac
+}
+
+NC='\033[0m'
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+
+lsfmt="table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.Size}}"
+psfmt="table {{.Names}}\t{{.Image}}:{{.ID}}\t{{.Status}}"
+
+main "$@"
