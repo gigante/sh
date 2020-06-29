@@ -10,9 +10,11 @@ Scripts that make my day easier
 | px  | interface for distro package managers | [read](http://github.com/gigante/sh) |
 | sam | ssh agent manager | [read](http://github.com/gigante/sh) |
 
-See each example in related script page
+See examples in related script docs
 
 ## How to install
+
+Download scripts from this repository to `~/bin` folder
 
 ```
 $ curl -sL https://git.io/JJvpl | bash -
