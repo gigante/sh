@@ -1,0 +1,4 @@
+script:
+  - shellcheck dk
+  - shellcheck px
+  - shellcheck sam
