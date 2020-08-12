@@ -52,17 +52,17 @@ function gz() {
 }
 
 function clean() {
+    yes '-> removing stopped containers'
+    stopped=$(docker ps -a -q)
+    [[ -n "$stopped" ]] && docker rm "${stopped}"
+
     yes '=> removing <none> images'
     noneimgs=$(docker images | grep "^<none>" | awk '{ print $3 }')
-    [[ -n "$noneimgs" ]] && docker rmi "$noneimgs"
+    [[ -n "$noneimgs" ]] && docker rmi "${noneimgs}"
 
     yes '-> removing dangling images'
     dangling=$(docker images -f "dangling=true" -q)
-    [[ -n "$dangling" ]] && docker rmi "$dangling"
-
-    yes '-> removing stopped containers'
-    stopped=$(docker ps -a -q)
-    [[ -n "$stopped" ]] && docker rm "$stopped"
+    [[ -n "$dangling" ]] && docker rmi "${dangling}"
 
     yes '-> removing unused networks'
     docker network prune -f
