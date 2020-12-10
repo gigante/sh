@@ -27,13 +27,8 @@ ${YELLOW}Some useful sam commands are:${NC}
     exit 1
 }
 
-function err() {
-    echo -e "${RED}$* ${NC}"
-}
-
-function yes() {
-    echo -e "${GREEN}$* ${NC}"
-}
+function err() { echo -e "${RED}$* ${NC}"; }
+function yes() { echo -e "${GREEN}$* ${NC}"; }
 
 function all() {
     keys=$(find "$HOME"/.ssh -maxdepth 1 -name '*.pub' -exec basename {} \;)
@@ -42,9 +37,7 @@ function all() {
     done
 }
 
-function usual() {
-    ssh-add -t "$lifetime" "$HOME/.ssh/$1"
-}
+function usual() { ssh-add -t "$lifetime" "$HOME/.ssh/$1"; }
 
 function passwordstore() {
     ! [ -x "$(command -v pass)" ] && err '=> pass not installed' && exit 1
@@ -66,24 +59,12 @@ function copy() {
     xclip -sel clip "$HOME/.ssh/$keyfile.pub" | yes "Public key '$2' copied to clipboard!"
 }
 
-function start() {
-    eval "$(ssh-agent -s)"
-}
-
-function stop() {
-    eval "$(ssh-agent -s -k)"
-}
-
 function fix() {
     find "$HOME/.ssh" -type f -exec chmod 600 {} \;
     find "$HOME/.ssh" -name '*.pub' -type f -exec chmod 644 {} \;
     chmod 644 "$HOME/.ssh/known_hosts"
     chmod 644 "$HOME/.ssh/config"
     chmod 700 "$HOME/.ssh"
-}
-
-function gen() {
-    ssh-keygen -t rsa -b 4096 -C "$2"
 }
 
 function deploy() {
@@ -105,7 +86,7 @@ function main() {
     start) start ;;
     stop) stop ;;
     fix) fix ;;
-    gen) gen "$@" ;;
+    gen) ssh-keygen -t rsa -b 4096 -C "$2" ;;
     deploy) deploy "$@" ;;
     *)
         err "ERROR: Unknown command '$1'"
