@@ -39,8 +39,8 @@ function run_yay() {
     ! [ -x "$(command -v yay)" ] && run_pacman "$command" "$pkg"
 
     case "$command" in
-    add) yay -S "$pkg" ;;
-    rm) yay -R "$pkg" ;;
+    add) yay -S $pkg ;;
+    rm) yay -R $pkg ;;
     up) yay -Syyu ;;
     sync) yay -Sy ;;
     clean) yay -Sc ;;
@@ -50,8 +50,8 @@ function run_yay() {
 
 function run_pacman() {
     case "$command" in
-    add) sudo pacman -S "$pkg" --noconfirm ;;
-    rm) sudo pacman -R "$pkg" ;;
+    add) sudo pacman -S $pkg --noconfirm ;;
+    rm) sudo pacman -R $pkg ;;
     up) sudo pacman -Syu ;;
     sync) sudo pacman -Sy ;;
     clean) sudo pacman -Scc ;;
@@ -61,8 +61,8 @@ function run_pacman() {
 
 function run_dnf() {
     case "$command" in
-    add) sudo dnf install -y "$pkg" ;;
-    rm) sudo dnf remove "$pkg" ;;
+    add) sudo dnf install -y $pkg ;;
+    rm) sudo dnf remove $pkg ;;
     up | sync) sudo dnf upgrade ;;
     clean) sudo dnf autoremove -y && sudo dnf clean all ;;
     *) sudo dnf search "$command" ;;
@@ -71,8 +71,8 @@ function run_dnf() {
 
 function run_apt() {
     case "$command" in
-    add) sudo apt install -y "$pkg" ;;
-    rm) sudo apt remove -y "$pkg" ;;
+    add) sudo apt install -y $pkg ;;
+    rm) sudo apt remove -y $pkg ;;
     up) sudo apt upgrade ;;
     sync) sudo apt update ;;
     clean) sudo apt autoremove && sudo apt clean ;;
@@ -82,8 +82,8 @@ function run_apt() {
 
 function run_zypper() {
     case "$command" in
-    add) zypper install "$pkg" ;;
-    rm) zypper remove "$pkg" ;;
+    add) zypper install $pkg ;;
+    rm) zypper remove $pkg ;;
     up) zypper update ;;
     sync) zypper refresh ;;
     clean) zypper clean ;;
@@ -93,8 +93,8 @@ function run_zypper() {
 
 function run_apk() {
     case "$command" in
-    add) apk add "$pkg" ;;
-    rm) apk del "$pkg" ;;
+    add) apk add $pkg ;;
+    rm) apk del $pkg ;;
     up) apk upgrade ;;
     sync) apk update ;;
     clean) apk cache clean ;;
@@ -123,6 +123,6 @@ YELLOW='\033[1;33m'
 
 distro=$(sed -n 's/^ID=//p' /etc/os-release)
 command=$1
-pkg=$2
+pkg="${@:2}"
 
 main "$@"
