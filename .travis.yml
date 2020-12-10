@@ -3,6 +3,6 @@ dist: bionic
 language: bash
 
 script:
-  - shellcheck dk
-  - shellcheck px
-  - shellcheck sam
+  - shellcheck -e SC2086 dk
+  - shellcheck -e SC2086 px
+  - shellcheck -e SC2086 sam
