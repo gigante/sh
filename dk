@@ -27,16 +27,14 @@ function err() { echo -e "${RED}$* ${NC}"; }
 function yes() { echo -e "${GREEN}$* ${NC}"; }
 
 function sh() {
-    if [[ -z "$3" ]]; then
-        docker run -it --rm "$2" '/bin/sh'
-    else
-        docker run -it --rm "$2" "${@:3}"
-    fi
+    [[ -z "$3" ]] && term='/bin/sh' || term="${@:3}"
+    docker run -it --rm "$2" "$term"
 }
 
 function bind() {
-    dir=$(basename "$PWD")
-    docker run -it --rm -v "$(pwd):/mnt/$dir" -w "/mnt/$dir" "$2" /bin/sh
+    folder=$(basename "$PWD")
+    [[ -z "$3" ]] && term='/bin/sh' || term="${@:3}"
+    docker run -it --rm -v "$(pwd):/mnt/$folder" -w "/mnt/$folder" "$2" "$term"
 }
 
 function gz() {
