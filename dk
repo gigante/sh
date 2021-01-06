@@ -27,13 +27,13 @@ function err() { echo -e "${RED}$* ${NC}"; }
 function yes() { echo -e "${GREEN}$* ${NC}"; }
 
 function sh() {
-    [[ -z "$3" ]] && term='/bin/sh' || term="${@:3}"
+    [[ -z "$3" ]] && term='/bin/sh' || term="${*:3}"
     docker run -it --rm "$2" "$term"
 }
 
 function bind() {
     folder=$(basename "$PWD")
-    [[ -z "$3" ]] && term='/bin/sh' || term="${@:3}"
+    [[ -z "$3" ]] && term='/bin/sh' || term="${*:3}"
     docker run -it --rm -v "$(pwd):/mnt/$folder" -w "/mnt/$folder" "$2" "$term"
 }
 
