@@ -7,7 +7,7 @@ function help() {
 |  __//  \\
 |_|  /_/\_\\
 
-${GREEN}PX - aliases for distro package managers${NC}
+${GREEN}PX - wrapper for package managers${NC}
 
 ${YELLOW}Usage:${NC}
   px <command> [<args>]
@@ -31,7 +31,8 @@ ${YELLOW}Supported package managers${NC}:
   ${GREEN}pacman${NC}  Archlinux, Manjaro
   ${GREEN}apt${NC}     Debian, ubuntu, Linux Mint
   ${GREEN}apk${NC}     Alpine
-  ${GREEN}zypper${NC}  OpenSuse"
+  ${GREEN}zypper${NC}  OpenSuse
+  ${GREEN}brew${NC}    macOS"
     exit 1
 }
 
@@ -102,6 +103,17 @@ function run_apk() {
     esac
 }
 
+function run_brew() {
+    case "$command" in
+    add) brew install $pkg ;;
+    rm) brew uninstall $pkg ;;
+    up) brew upgrade ;;
+    sync) brew update ;;
+    clean) brew cleanup ;;
+    *) brew search "$command" ;;
+    esac
+}
+
 function main() {
     [[ -z "$command" ]] && help
     if [ "$1" == 'sup' ]; then sup; fi
@@ -112,6 +124,7 @@ function main() {
     debian | ubuntu | linuxmint) run_apt "$command" "$pkg" ;;
     \"opensuse-tumbleweed\" | \"opensuse-leap\") run_zypper "$command" "$pkg" ;;
     alpine) run_apk "$command" "$pkg" ;;
+    Darwin) run_brew "$command" "$pkg" ;;
     *) echo -e "${RED}px doesnt support your distro. See 'sup' command${NC}" ;;
     esac
 }
@@ -121,7 +134,12 @@ RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 
-distro=$(sed -n 's/^ID=//p' /etc/os-release)
+if [ -f "/etc/os-release" ]; then
+  distro=$(sed -n 's/^ID=//p' /etc/os-release)
+else
+  distro=$(uname)
+fi
+
 command=$1
 pkg="${*:2}"
 
