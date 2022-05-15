@@ -1,0 +1,33 @@
+#!/bin/zsh
+
+function help_command() {
+    cat <<END;
+Format Disk Utility
+Usage: format <device> <format>
+
+Examples:
+   format /dev/sdc1 ext4
+   format /dev/sdc1 ntfs
+   format /dev/sdc1 vfat
+END
+    exit 1
+}
+
+function err() { echo -e "\033[0;31mERROR: $@\033[0m" >&2; }
+
+function main() {
+    [[ -z "$1" ]] && help_command
+
+    case "$2" in
+        ext4)  sudo mkfs.ext4 $1 -L 'LNX' ;;
+
+        ntfs)  sudo mkfs.ntfs -f $1 -L 'WIN' ;;
+
+        vfat)  sudo mkfs.vfat -F 32 -n 'USB' -I $1 ;;
+
+        # Unknown command
+        *)  err "Unknown command '$1'"; exit 2; ;;
+    esac
+}
+
+main "$@"
