@@ -55,8 +55,12 @@ EOF
 }
 
 function copy() {
-    ! [ -x "$(command -v xclip)" ] && err '=> xclip not installed' && exit 1
-    xclip -sel clip "$HOME/.ssh/$keyfile.pub" | yes "Public key '$2' copied to clipboard!"
+    if [ -f "/etc/os-release" ]; then
+        ! [ -x "$(command -v xclip)" ] && err '=> xclip not installed' && exit 1
+        xclip -sel clip "$HOME/.ssh/$keyfile.pub" | yes "Public key '$2' copied to clipboard!"
+    else
+        cat "$HOME/.ssh/$keyfile.pub" | pbcopy |yes "Public key '$2' copied to clipboard!"
+    fi
 }
 
 function fix() {
@@ -102,7 +106,7 @@ YELLOW='\033[1;33m'
 
 #add_cmd='usual'
 add_cmd=passwordstore
-prefix='id_rsa_'
+prefix=''
 lifetime='1d'
 
 main "$@"
