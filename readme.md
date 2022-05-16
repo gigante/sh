@@ -9,7 +9,7 @@ Scripts that make my day easier
 | Script | Description | Docs |
 | ------------- | ------------- | ------------- |
 | dk  | wraper docker commands | [read](http://github.com/gigante/sh) |
-| px  | interface for distro package managers | [read](http://github.com/gigante/sh) |
+| px  | interface for distro package managers | [read](https://github.com/gigante/sh/blob/master/px.md) |
 | sam | ssh agent manager | [read](http://github.com/gigante/sh) |
 
 See examples in related script docs
@@ -18,8 +18,8 @@ See examples in related script docs
 
 Download scripts from this repository to `~/bin` folder
 
-```
-$ git clone https://github.com/gigante/sh ~/bin
+```sh
+git clone https://github.com/gigante/sh ~/bin
 ```
 
 ## License
