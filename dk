@@ -67,8 +67,10 @@ function clean() {
 function mon() {
     if ! [ -x "$(command -v ctop)" ]; then
         yes '=> Downloading ctop'
-        version="$(curl --silent https://api.github.com/repos/bcicen/ctop/releases/latest | jq .tag_name -r)"
-        curl -L "https://github.com/bcicen/ctop/releases/download/v${version}/ctop-${version}-linux-amd64" -o "$HOME/bin/ctop"
+        version="$(curl --silent https://api.github.com/repos/bcicen/ctop/releases/latest | jq .tag_name -r | cut -c2-)"
+        arch="darwin-amd64"
+        [ -f "/etc/os-release" ] && arch="linux-amd64"
+        curl -L "https://github.com/bcicen/ctop/releases/download/v${version}/ctop-${version}-${arch}" -o "$HOME/bin/ctop"
         chmod +x "$HOME/bin/ctop"
     fi
     ctop
