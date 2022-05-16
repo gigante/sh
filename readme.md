@@ -10,7 +10,7 @@ Scripts that make my day easier
 | ------------- | ------------- | ------------- |
 | dk  | wraper docker commands | [read](https://github.com/gigante/sh/blob/master/dk.md) |
 | px  | interface for distro package managers | [read](https://github.com/gigante/sh/blob/master/px.md) |
-| sam | ssh agent manager | [read](http://github.com/gigante/sh) |
+| sam | ssh agent manager | [read](https://github.com/gigante/sh/blob/master/sam.md) |
 
 See examples in related script docs
 
