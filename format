@@ -20,12 +20,8 @@ function main() {
 
     case "$2" in
         ext4)  sudo mkfs.ext4 $1 -L 'LNX' ;;
-
         ntfs)  sudo mkfs.ntfs -f $1 -L 'WIN' ;;
-
         vfat)  sudo mkfs.vfat -F 32 -n 'USB' -I $1 ;;
-
-        # Unknown command
         *)  err "Unknown command '$1'"; exit 2; ;;
     esac
 }
