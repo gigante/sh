@@ -19,7 +19,7 @@ See examples in related script docs
 Download scripts from this repository to `~/bin` folder
 
 ```
-$ curl -sL https://git.io/JJvpl | bash -
+$ git clone https://github.com/gigante/sh ~/bin
 ```
 
 ## License
