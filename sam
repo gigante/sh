@@ -87,8 +87,6 @@ function main() {
     all) all ;;
     clean) ssh-add -D ;;
     copy) copy "$keyfile" "$2" ;;
-    start) start ;;
-    stop) stop ;;
     fix) fix ;;
     gen) ssh-keygen -t rsa -b 4096 -C "$2" ;;
     deploy) deploy "$@" ;;
