@@ -107,7 +107,7 @@ function run_brew() {
     case "$command" in
     add) brew install $pkg ;;
     rm) brew uninstall $pkg ;;
-    up) brew upgrade ;;
+    up) brew upgrade --cask --greedy ;;
     sync) brew update ;;
     clean) brew cleanup ;;
     *) brew search "$command" ;;
